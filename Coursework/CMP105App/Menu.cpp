@@ -18,36 +18,36 @@ Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
 
 	title.setFont(font);
 	title.setCharacterSize(24);
-	title.setFillColor(sf::Color::White);
+	title.setFillColor(sf::Color::White); //Header and main information pieces.
 
 	script.setFont(font);
 	script.setCharacterSize(16);
-	script.setFillColor(sf::Color::White);
+	script.setFillColor(sf::Color::White); //Accompanying text.
 
 	backPage.setFont(font);
-	backPage.setString("Return");
+	backPage.setString("Return"); //Allows navigation back from settings and help pages. Doesn't equires repositioning.
 	backPage.setCharacterSize(16);
 	backPage.setFillColor(sf::Color::White);
 	backPage.setPosition(window->getSize().x / 1.66, window->getSize().y / 1.45);
 
 	blackBox.loadFromFile("gfx/BlackBoxMenu.png");
 	menuShade.setTexture(&blackBox);
-	menuShade.setSize(sf::Vector2f(1200, 675));
+	menuShade.setSize(sf::Vector2f(1200, 675)); //Wall that contrasts behind menu objects, improves readability.
 	menuShade.setPosition(0, 0);
 
 	pointer.setFont(font);
-	pointer.setString(">");
+	pointer.setString(">"); //Inidcates current selectable.
 	pointer.setCharacterSize(16);
 	pointer.setFillColor(sf::Color::White);
 
 	onOff.setFont(font);
-	onOff.setString("*");
+	onOff.setString("*"); //Inidcates current setting for invince toggle.
 	onOff.setCharacterSize(16);
 	onOff.setFillColor(sf::Color::White);
 
 	bgArt.loadFromFile("gfx/BGProtoLined.png");
 	menuBackground.setTexture(&bgArt);
-	menuBackground.setSize(sf::Vector2f(1200, 2363));
+	menuBackground.setSize(sf::Vector2f(1200, 2363)); //Background art.
 	menuBackground.setPosition(0, 0); //1688 ;
 }
 
@@ -61,25 +61,21 @@ void Menu::handleInput(float dt)
 {
 	if (input->isKeyDown(sf::Keyboard::Enter) == true)
 	{
-		input->setKeyUp(sf::Keyboard::Enter);
+		input->setKeyUp(sf::Keyboard::Enter); //The following switch case determines the user's selection and processes accordingly.
 		switch (pgNav)
 		{
-		case 0: pgNav++; break;
-		case 1: if (selectNav == 0) { pgNav = 0; std::cout << "Menu>Level.\n"; gameState->setCurrentState(State::LEVEL); }
-				else if (selectNav == 1) { pgNav = 2; }
+		case 0: pgNav++; break; //(Enter to proceed)
+		case 1: if (selectNav == 0) { pgNav = 0; std::cout << "Menu>Level.\n"; gameState->setCurrentState(State::LEVEL); } //Play game
+				else if (selectNav == 1) { pgNav = 2; } //Settings and help selection.
 				else { pgNav = 3; } break;
-		case 2: if (selectNav == 0) { invincible = true; }
+		case 2: if (selectNav == 0) { invincible = true; } //Settings toggle and return.
 				else if (selectNav == 1) { invincible = false; }
 				else { pgNav = 1; selectNav = 1; } break;
-		case 3: pgNav = 1; break;
+		case 3: pgNav = 1; break; //Help return.
 		}
 	}
-	//std::cout << "pgNav " << pgNav << "; selectNav " << selectNav << ".\n";
-	/*std::cout << "Menu>Level.\n";
-	gameState->setCurrentState(State::LEVEL);*/
-	//reset selector when changing page
 
-	if (input->isKeyDown(sf::Keyboard::W) == true) {
+	if (input->isKeyDown(sf::Keyboard::W) == true) { //The WASD input decisions determine if a move is valid for a given menu based off of the navigation variables.
 		input->setKeyUp(sf::Keyboard::W);
 		switch (pgNav)
 		{
@@ -117,7 +113,7 @@ void Menu::update(float dt)
 {
 	//std::cout << "(" << input->getMouseX() << "),(" << input->getMouseY() << ")\n";
 
-	switch (pgNav)
+	switch (pgNav) //This switch case sets the page layout according to the pgNav (setting string content, positioning).
 	{
 	case 0 :
 		script.setString("Please enter to begin.");
@@ -150,7 +146,7 @@ void Menu::render()
 {
 	beginDraw(); window->draw(menuBackground);
 
-	switch (pgNav)
+	switch (pgNav) //A similar switch as before decides what to render based off of pgNav (What a given page requires.).
 	{
 	case 0:
 		window->draw(script); break;

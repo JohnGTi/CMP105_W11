@@ -9,9 +9,10 @@ protected:
 	Animation* currentAnimation;
 	Animation walk[12];
 	Animation strike[12];
+	//Declares both evolving animations for enemy.
 
 
-	int stance = 6;
+	int stance = 6; //Preset to face downwards (towards player starting point).
 	int stanceLock;
 
 	float lockDuration = 0;
@@ -34,22 +35,24 @@ protected:
 	sf::Vector2f direction;
 	sf::Vector2f acceleration;
 
+	//^^^Many of these values serve the same purpose as in protag, but are managed a little differentl in actual processess (e.g different movement, collsion principles).
+
 public:
 	Enemy();
 	~Enemy();
 
-	float getTheta() { return theta; };
-	float getstrikePoint(int c) { return strikePoint[c][stance]; };
-	float getHealth() { return health; };
+	float getTheta() { return theta; }; //Other files have access to the players direction.
+	float getstrikePoint(int c) { return strikePoint[c][stance]; }; //Getter allows hitmarker to be set.
+	float getHealth() { return health; }; //Getter allows level to check state.
 
-	bool getHit() { return hit; };
-	void sceneEnd(float dt);
+	bool getHit() { return hit; }; //Getter primarily to allow resolution with player.
+	void sceneEnd(float dt); //Simulates enemy being anchored to the ground in win state.
 
 	int getStance() { return stance; };
 	int getStanceLock() { return stanceLock; };
 
-	void collisionResponse(GameObject*);
+	void collisionResponse(GameObject*); //Body collision.
 	void handleInput(float dt);
 	void update(float dt, sf::Vector2f, bool);
-	void resetPlay();
+	void resetPlay(); //Reset many above values for retry or new game.
 };

@@ -14,10 +14,10 @@ Protag::Protag()
 		strike[i].addFrame(sf::IntRect(192, startPosY, 64, 64));
 		startPosY += 64;
 	}
-
+	//For loop sets up 12 different walking and striking animations (one for each stance).
 	currentAnimation = &walk[0];
 
-	sceneVelocity.y = 10.f;
+	sceneVelocity.y = 10.f; //Values set for motion in end scene.
 	acceleration.y = 10.f;
 }
 
@@ -28,7 +28,7 @@ Protag::~Protag()
 
 void Protag::collisionResponse(GameObject* collider, sf::Vector2f enemPos)
 {
-	if ((enemPos.y + 4) >= (getPosition().y - 28)) { setPosition(getPosition().x, getPosition().y - 0.1f); }
+	if ((enemPos.y + 4) >= (getPosition().y - 28)) { setPosition(getPosition().x, getPosition().y - 0.1f); } //If protag is in contact with enemy, movement in this space is prevented.
 	else { setPosition(getPosition().x, getPosition().y + 0.1f); }
 }
 
@@ -48,15 +48,10 @@ void Protag::sceneEnd(float dt)
 
 void Protag::handleInput(float dt, sf::Vector2f enemPos, int enemStance)
 {
-	if (input->isKeyDown(sf::Keyboard::W) == true && lock == false)
+	if (input->isKeyDown(sf::Keyboard::W) == true && lock == false) //Will not perform movement while the character is locked into an attack.
 	{
-		stepVelocity.y = -150.0f + slow; //-150.0f;
+		stepVelocity.y = -150.0f + slow; //-150.0f; Sets the protag movement speed, offset by slowing effects as a result of damage taken.
 		applyForce = true;
-		//std::cout << "W.\n";
-
-		/*currentAnimation = &walk;
-		currentAnimation->animate(dt);
-		setTextureRect(currentAnimation->getCurrentFrame());*/
 	}
 
 	if (input->isKeyDown(sf::Keyboard::A) == true && lock == false)
@@ -83,45 +78,44 @@ void Protag::handleInput(float dt, sf::Vector2f enemPos, int enemStance)
 	if (input->isMouseLDown() == true && lock == false)
 	{
 		input->setMouseLDown(false);
-		//std::cout << "(" << getPosition().x << "),(" << getPosition().y << ")\n";
-		lock = true;
-		stanceLock = stance;
+		lock = true; //Lock protag into attack (vulnerability encourages attention to timing of attacks).
+		stanceLock = stance; //Locks player in committed direction.
 	}
 	if (lock == true) {
 		lockDuration += dt;
-		currentAnimation = &strike[stanceLock];
+		currentAnimation = &strike[stanceLock]; //Animate protag strike.
 		currentAnimation->animate(dt);
 
 		int xOffset = 2;
-		if (enemStance == 2 || enemStance == 3) { xOffset = (-10); }
+		if (enemStance == 2 || enemStance == 3) { xOffset = (-10); } //Enemy circle is offset when the enemy turns to either side so as to maintain precision of collision.
 		else if (enemStance == 9) { xOffset = (10); }
 
-		if (lockDuration <= 0.125f && lockDuration <= 0.15f) {
+		if (lockDuration <= 0.125f && lockDuration <= 0.15f) { //Point v Circle collision detection performed within a small window.
 			float deltaX = (enemPos.x + xOffset) - (getPosition().x + strikePoint[0][stance]);
 			float deltaY = (enemPos.y - 4) - (getPosition().y + strikePoint[1][stance]);
 
-			if ((deltaX * deltaX + deltaY * deltaY) < (26 * 26)) { hit = true; }
-		}//std::cout << "Hit.\n";
-		if (lockDuration >= 0.25f) { currentAnimation->reset(); currentAnimation = &walk[stanceLock]; currentAnimation->reset(); }
-		if (lockDuration >= 0.35f) { lock = false; lockDuration = 0; hit = false; } //Change 0.35 to 0.45?
+			if ((deltaX * deltaX + deltaY * deltaY) < (26 * 26)) { hit = true; } //Hit is true if tip of sword connects anywhere with enemy circle.
+		}
+		if (lockDuration >= 0.25f) { currentAnimation->reset(); currentAnimation = &walk[stanceLock]; currentAnimation->reset(); } //Reset animation after attack has run.
+		if (lockDuration >= 0.35f) { lock = false; lockDuration = 0; hit = false; } //Set period until player can move normally.
 	}
 }
 
-void Protag::update(float dt, bool enemSuccess, bool invisOn)
+void Protag::update(float dt, bool enemSuccess, bool invisOn) //Here is where invincibility is passed as damage taken is resolved in this function.
 {
-	if (enemSuccess) {
-		if (allowResolve) { //stanceRange
-			if (!invisOn) { health = health - 0.05f; }//decrement protag health by...
+	if (enemSuccess) { //Checks enemy attack collision feedback and resolves.
+		if (allowResolve) { //allowResolve ensures a sinlge hit only registers as a single hit.
+			if (!invisOn) { health = health - 0.05f; } //decrement protag health by... (if not invincible).
 			slow = slow + 1.625f; //slow protag overall speed by...
 			allowResolve = false; std::cout << "protag.health " << health << ".\n";
 		}
 	} if (!enemSuccess) { allowResolve = true; }
 
 	sf::Vector2f pos;
-	if (applyForce == true) {
+	if (applyForce == true) { //Force applied by WASD key presses.
 		pos = stepVelocity * dt; // s = ut
 	}
-	if ((getPosition().x + pos.x) > -144 && (getPosition().x + pos.x) < window->getSize().x + 144)
+	if ((getPosition().x + pos.x) > -144 && (getPosition().x + pos.x) < window->getSize().x + 144) //Player is not restricted exactly to frame. But will not move if outwith drawn background.
 	{
 		if ((getPosition().y + pos.y) > -144 && (getPosition().y + pos.y) < window->getSize().y + 144)
 		{
@@ -129,18 +123,18 @@ void Protag::update(float dt, bool enemSuccess, bool invisOn)
 		}
 	}
 	//^^^Player can only go so far out of bounds.
-	stepVelocity = sf::Vector2f(0, 0);
-
-	//if (input->isMouseLDown() == true) { setPosition(input->getMouseX(), input->getMouseY()); }
+	stepVelocity = sf::Vector2f(0, 0); //Reset velocity
 
 	float A;
 	float B;
-	float add = 0.f;
+	float add = 0.f; 
+	//Point A,B is decided by comparison of protag position and mouse position.
+	//The series of ifs place the mouse in a quadrant related to the player's position. 
 
 	if (input->getMouseX() > getPosition().x && input->getMouseY() < getPosition().y) {
-		A = getPosition().x;
+		A = getPosition().x; //Point (A, B) is set as the third point of a triangle.
 		B = input->getMouseY();
-		add = 0.f;
+		add = 0.f; //Depending on quadrant, an amount is added to the angle calculated to make data appropriate to compare with scale of 0-12 (theta 0-360).
 		
 	} //A
 	else if (input->getMouseX() > getPosition().x && input->getMouseY() > getPosition().y) {
@@ -165,22 +159,22 @@ void Protag::update(float dt, bool enemSuccess, bool invisOn)
 	float hyp = ((input->getMouseX() - getPosition().x) * (input->getMouseX() - getPosition().x)) + ((input->getMouseY() - getPosition().y) * (input->getMouseY() - getPosition().y));
 	hyp = sqrt(hyp);
 
-	theta = adj / hyp;
+	theta = adj / hyp; //Trigonometry used to determine angle related to mouse position.
 	theta = acos(theta);
 	theta = theta * 180 / 3.1415 + add;
 
 	int max = 45;
 	for (int p = 1; p < 12; p++) {
 		if (theta < max) {
-			stance = p;
+			stance = p; //Stance is set if within range of theta.
 			break;
 		}
 		else { max = max + 30; }
 	} if (theta > 345 || theta < 15) { stance = 0; }
 
 	if (lock == false) {
-		currentAnimation = &walk[stance];
-		if (applyForce == true) { currentAnimation->animate(dt); }
+		currentAnimation = &walk[stance]; //Sets animation according to stance.
+		if (applyForce == true) { currentAnimation->animate(dt); } //Animates while force applied.
 	}
 	setTextureRect(currentAnimation->getCurrentFrame());
 	applyForce = false;
@@ -188,6 +182,7 @@ void Protag::update(float dt, bool enemSuccess, bool invisOn)
 
 void Protag::resetPlay()
 {
+	//Reset values as appropriate for retry or new game.
 	lockDuration = 0;
 	flinchDuration = 0;
 	health = 1.f;
@@ -201,28 +196,3 @@ void Protag::resetPlay()
 
 	setPosition(window->getSize().x * 0.5, window->getSize().y * 0.6);
 }
-
-/*for (int i = 0; i < 320; i = i + 64) { walk.addFrame(sf::IntRect(i, 0, 32, 32)); }
-	for (int i = 0; i < 320; i = i + 64) { walk.addFrame(sf::IntRect(i, 32, 32, 32)); }*/
-
-	/*if (theta > 345 || theta < 15) { stance = 0; }
-	else if (theta < 45) { stance = 1; }
-	else if (theta < 75) { stance = 2; }
-	else if (theta < 105) { stance = 3; }
-	else if (theta < 135) { stance = 4; }
-	else if (theta < 165) { stance = 5; }
-	else if (theta < 195) { stance = 6; }
-	else if (theta < 225) { stance = 7; }
-	else if (theta < 255) { stance = 8; }
-	else if (theta < 285) { stance = 9; }
-	else if (theta < 315) { stance = 10; }
-	else { stance = 11; } //if (theta < 345)
-	//Do above with a for loop?
-	*/
-
-	/*currentAnimation = &walk;
-
-	walk.addFrame(sf::IntRect(p, q, 32, 32));
-	walk.addFrame(sf::IntRect(p + 32, q, 32, 32));
-
-	setTextureRect(currentAnimation->getCurrentFrame());*/

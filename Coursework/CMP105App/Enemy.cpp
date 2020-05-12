@@ -17,11 +17,11 @@ Enemy::Enemy()
 		strike[i].addFrame(sf::IntRect(384, startPosY, 64, 64));
 		startPosY += 64;
 	}
-
+	//For loop sets up 12 different walking and striking animations (one for each stance).
 	currentAnimation = &walk[0];
 	speed = 82.5f;
-
-	stepVelocity.y = 10.f;
+	
+	stepVelocity.y = 10.f; //Values set for motion in end scene.
 	acceleration.y = 10.f;
 }
 
@@ -56,17 +56,17 @@ void Enemy::handleInput(float dt)
 
 void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 {
-	// if object is close enough to target
+	//If object is close enough to target, the enemy picks up the pace/
 	if (Vector::magnitude(target - getPosition()) < 219.f) {
-		walk[stance].setFrameSpeed(1.5f / 10.f);
-		speed = 100.f - slow;
+		walk[stance].setFrameSpeed(1.5f / 10.f); //At a quicker pace, the walking animation is sped up.
+		speed = 100.f - slow; //Set speed can be offset by variable as damage is taken.
 	}
 	else { walk[stance].setFrameSpeed(2.25f / 10.f); }
 
-	// calculate direction and move
+	//Calculate direction and move
 
-	if (flinch == false) {
-		direction = target - getPosition();
+	if (flinch == false) { 
+		direction = target - getPosition(); //Enemy will move in the opposite direction of player when flinching (well timed stagger).
 	}
 	else {
 		direction = getPosition() - target;
@@ -74,29 +74,28 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 	direction = Vector::normalise(direction);
 	velocity = (direction * speed);
 
-	if (target.x != 600) { initial = true; }
+	if (target.x != 600) { initial = true; } //Players initial movement triggers enemy to enter frame.
 
-	if (lock == false || flinch == true) { if (initial) { setPosition(getPosition() + (velocity * dt)); } }
+	if (lock == false || flinch == true) { if (initial) { setPosition(getPosition() + (velocity * dt)); } } //Authorises and resolves player movement.
 	speed = 82.5f - slow;
 
-	if (Vector::magnitude(target - getPosition()) < 60.f && lock == false) //if (Vector::magnitude(target - getPosition()) < 219.f && lock == false)
+	if (Vector::magnitude(target - getPosition()) < 60.f && lock == false) //Enemy decides to attack when within range.
 	{
-		//std::cout << "(" << getPosition().x << "),(" << getPosition().y << ")\n";
-		lock = true;
-		stanceLock = stance;
+		lock = true; //Enemy commits to attack.
+		stanceLock = stance; //Enemy commits to aim. (All similar to protag).
 	}
 	if (lock == true) {
 		lockDuration += dt;
-		if (flinch == false) { currentAnimation = &strike[stanceLock]; currentAnimation->animate(dt); }
+		if (flinch == false) { currentAnimation = &strike[stanceLock]; currentAnimation->animate(dt); } //Strike animation.
 
 		if (prtgSuccess) {
-			if (!flinchRes && lockDuration >= 0.f && lockDuration < 0.0125f) {
+			if (!flinchRes && lockDuration >= 0.f && lockDuration < 0.0125f) { //Enemy successfully staggered if player connects on first frame of enemy attack. Flinch is subtle, serves to allow more time for player to step back.
 				flinch = true; flinchRes = true; currentAnimation->reset(); currentAnimation = &strike[stanceLock - 4]; //std::cout << "Flinch.\n";
 			}
 			if (allowResolve) {
 				health = health - 0.025f; //decrement enemy health by...
 				
-				if (health < 0.35f && slow == 0.f) {
+				if (health < 0.35f && slow == 0.f) { //At 0.35, the enemy's health is reset. Further damage slows movement.
 					health = 1.f;
 					slow = slow + 1.625f;
 				} else if (slow > 0.f) { slow = slow + 1.625f; }
@@ -111,18 +110,19 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 			float deltaY = (getPosition().y - (target.y - 6));
 			if ((deltaX * deltaX + deltaY * deltaY) < ((70 + 22) * (70 + 22))) {
 				if (stanceLock == stance) { hit = true; } //Enemy stance points to player position, if the stance position saved when the enemy struck is the same as the updating stance, then the player is in range.
-			} //std::cout << "Hit.\n"; //stanceLock >= stance - 1 || stanceLock <= stance + 1
+			}
+			//The above if allows the attack range to be more generous, a whole circle representing the enemy's reach, then sectioned off by a check to ensure the player is in range of specific attack.
+			//This allows strategic maneuvering as the player can bait an attack and reposition around the enemy to safely strike.
 		}
-		if (lockDuration >= 0.0125f && flinch == true) { flinch = false; lockDuration = 0.f; hit = false; currentAnimation->reset(); } //0.82f
+		if (lockDuration >= 0.0125f && flinch == true) { flinch = false; lockDuration = 0.f; hit = false; currentAnimation->reset(); } //After the stagger period, the lock is not lifted, but reset. This triggers the enemy to immediately attack and combats stagger locking.
 		if (lockDuration >= 0.5f) { currentAnimation->reset(); currentAnimation = &walk[stanceLock]; currentAnimation->reset(); }
-		if (lockDuration >= 0.68f && flinch == false) { lock = false; lockDuration = 0; hit = false; flinchRes = false; } //flinch = false; //0.63f
-		//if (lockDuration >= 0.82f && flinch == true) { lock = false; lockDuration = 0; flinch = false; } //0.82f
+		if (lockDuration >= 0.68f && flinch == false) { lock = false; lockDuration = 0; hit = false; flinchRes = false; }
 	}
 
 	float A;
 	float B;
-	float add = 0.f;
-	if (target.x > getPosition().x && target.y < getPosition().y) { //(getPosition().y - 42) may improve accuracy of graphical representation (enemy head points to player body).
+	float add = 0.f; //Same technique used in protag class. Evaluates relation between two points. Builds a third to be used to form a triangle and find the angle of direction.
+	if (target.x > getPosition().x && target.y < getPosition().y) {
 		A = getPosition().x;
 		B = target.y;
 		add = 0.f;
@@ -142,10 +142,7 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 		B = getPosition().y;
 		add = 270.f;
 	} //T
-	//(input->getMouseX() < getPosition().x && input->getMouseY() < getPosition().y)
 
-	// P(A, B)
-	//adj^2 = sqrt/(Py - protagy)^2 + (Px - protagx)^2'
 	float adj = (((A - getPosition().x) * (A - getPosition().x) + (B - getPosition().y) * (B - getPosition().y)));
 	adj = sqrt(adj);
 	float hyp = ((target.x - getPosition().x) * (target.x - getPosition().x)) + ((target.y - getPosition().y) * (target.y - getPosition().y));
@@ -164,10 +161,12 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 		else { max = max + 30; }
 	}
 	if (theta > 345 || theta < 15) { stance = 0; }
+	//Previous code functions as in protag.
 
+	//The below circle v circle fixes the error where the player could fit snug underneath the origin of the enemy on the far side, and the enemy would face the opposite direction and be unable to properly attack.
 	float deltaX = (getPosition().x - target.x);
 	float deltaY = (getPosition().y - (target.y));
-	if ((deltaX * deltaX + deltaY * deltaY) < ((32 + 26) * (32 + 26))) { stance = 0; }
+	if ((deltaX * deltaX + deltaY * deltaY) < ((32 + 26) * (32 + 26))) { stance = 0; } //The two circles meet where this error would occur.
 
 	if (lock == false) {
 		currentAnimation = &walk[stance];
@@ -178,6 +177,7 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 
 void Enemy::resetPlay()
 {
+	//Reset values as appropriate for retry or new game.
 	lockDuration = 0;
 	health = 1.f;
 	slow = 0.f;

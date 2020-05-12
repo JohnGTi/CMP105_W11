@@ -37,28 +37,28 @@ private:
 	AudioManager* audio;
 
 	Protag protag;
-	sf::Texture prtgBase;
+	sf::Texture prtgBase; //Protag(onist) class. Player controlled GameObject.
 
 	Enemy enemy;
-	sf::Texture enemBase;
+	sf::Texture enemBase; //Enemy class. GameObject pursues player.
 
 	sf::CircleShape prtgHitBox;
-	sf::CircleShape enemHitBox;
+	sf::CircleShape enemHitBox; //Two shapes used to visualise collision detection for refining interactions.
 	//sf::RectangleShape enemHitBox;
 
 	GameObject hitMarker;
-	sf::Texture hMtexture;
+	sf::Texture hMtexture; //Hit marker indicates successful hits for the respective entities.
 
-	Background levelBackground;
+	Background levelBackground; //Stationary canvas, animates with a player win for effective transition.
 	sf::Texture bgArt;
 
-	bool pause = false;
-	int yNav = 0;
+	bool pause = false; //Boolean controlling pause state.
+	int yNav = 0; //Up and down navigation for pause menu/death screen.
 
-	GameObject menuShade;
+	GameObject menuShade; //GameObject serves as a backdrop for pause menu/death screen.
 	sf::Texture blackBox;
 
-	sf::Font font;
-	sf::Text title;
+	sf::Font font; //Font points to a piece of work that is not my own. Should be referenced in report.
+	sf::Text title; //Menu text for pause and death screen.
 	sf::Text pointer;
 };

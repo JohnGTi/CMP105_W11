@@ -4,7 +4,7 @@ Background::Background()
 {
 	//stepVelocity.y = (1519.f / 5.88f);
 	stepVelocity.y = 10.f;
-	acceleration.y = 10.f;
+	acceleration.y = 10.f; //Values set for motion in end scene.
 }
 
 Background::~Background()
@@ -31,6 +31,9 @@ bool Background::sceneEnd(float dt)
 	//if (sceneDuration >= (2.68f + 0.73f)) { constant +y; }
 
 	if (getPosition().y >= 0.f) { sceneDuration = 0; return true; }
+	
+	//This function accelerates the background image vertically until the top of the image alligns with the window.
+	//False is returned until the top of the image is framed properly. After which returning true allows the function call in level to change the gameState over to the splash screen.
 
 	return false;
 }

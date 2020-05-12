@@ -8,9 +8,9 @@ private:
 	//float speed = 400.f;
 	//sf::RenderWindow* window;
 	sf::Vector2f stepVelocity;
-	sf::Vector2f acceleration;
+	sf::Vector2f acceleration; //Vectors to be placed in a given formula.
 
-	float sceneDuration = 0;
+	float sceneDuration = 0; //Internal clock for a given scene.
 
 public:
 	//Functions:
