@@ -30,7 +30,7 @@ Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
 	backPage.setFillColor(sf::Color::White);
 	backPage.setPosition(window->getSize().x / 1.66, window->getSize().y / 1.45);
 
-	blackBox.loadFromFile("gfx/BlackBoxMenu.png");
+	blackBox.loadFromFile("gfx/BlackBoxAlpha.png");
 	menuShade.setTexture(&blackBox);
 	menuShade.setSize(sf::Vector2f(1200, 675)); //Wall that contrasts behind menu objects, improves readability.
 	menuShade.setPosition(0, 0);

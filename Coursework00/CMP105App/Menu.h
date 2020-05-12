@@ -5,6 +5,8 @@
 #include "Framework/AudioManager.h"
 #include "Framework/GameState.h"
 #include "Framework/GameObject.h"
+#include "Framework/Animation.h"
+
 #include <string>
 #include <iostream>
 

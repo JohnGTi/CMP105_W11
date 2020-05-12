@@ -7,8 +7,8 @@
 #include "Framework/GameState.h"
 #include "Framework/GameObject.h"
 #include "Framework/Collision.h"
-#include "Background.h"
 
+#include "Background.h"
 #include "Enemy.h"
 #include "Protag.h"
 
@@ -61,4 +61,7 @@ private:
 	sf::Font font; //Font points to a piece of work that is not my own. Should be referenced in report.
 	sf::Text title; //Menu text for pause and death screen.
 	sf::Text pointer;
+
+	GameObject cursor;
+	sf::Texture cursorImg;
 };

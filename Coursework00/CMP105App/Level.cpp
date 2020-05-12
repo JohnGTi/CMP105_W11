@@ -47,7 +47,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	levelBackground.setPosition(0, -1519); //Frames background at lowest point (image is larger than window to allow for end scene).
 	levelBackground.setInput(input);
 
-	blackBox.loadFromFile("gfx/BlackBoxMenu.png");
+	blackBox.loadFromFile("gfx/BlackBoxAlpha.png");
 	menuShade.setTexture(&blackBox);
 	menuShade.setSize(sf::Vector2f(1200, 675));
 	menuShade.setPosition(0, 0);
@@ -68,6 +68,12 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	pointer.setString(">"); //Indicates user position on the menus.
 	pointer.setCharacterSize(16);
 	pointer.setFillColor(sf::Color::White);
+
+	cursorImg.loadFromFile("gfx/mousePointer.png");
+	cursor.setTexture(&cursorImg);
+	cursor.setSize(sf::Vector2f(20, 20));
+	cursor.setOrigin(sf::Vector2f(10, 10));
+	window->setMouseCursorVisible(false);
 }
 
 Level::~Level()
@@ -117,6 +123,9 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt, bool invincibility)
 {
+	cursor.setPosition(input->getMouseX(), input->getMouseY());
+	cursor.setRotation(protag.getTheta());
+
 	prtgHitBox.setPosition(protag.getPosition().x - 22, protag.getPosition().y - 28); //Updates positioning for hitboxes, should they need to be drawn.
 	enemHitBox.setPosition(enemy.getPosition().x - 50, enemy.getPosition().y - 50);
 
@@ -191,7 +200,7 @@ void Level::render()
 		window->draw(pointer);
 		window->draw(title);
 	}
-
+	window->draw(cursor);
 	//std::cout << "(" << protag.getPosition().y << "),(" << input->getMouseY() << ")\n";
 	endDraw();
 }
