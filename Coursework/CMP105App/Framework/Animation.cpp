@@ -7,6 +7,8 @@ Animation::Animation()
 	elapsedTime = 0.f;
 	isPlaying = true;
 	isLooping = true;
+	animationSpeed = 0.0f;
+	flipped = false;
 }
 
 // Adds animation frame. Rect object represent a single sprite frame
@@ -51,6 +53,7 @@ void Animation::animate(float dt)
 				else
 				{
 					currentFrame--;
+					setPlaying(false);
 				}
 			}
 			elapsedTime = 0;
@@ -61,6 +64,13 @@ void Animation::animate(float dt)
 // Reset animation.
 void Animation::reset()
 {
+	currentFrame = 0;
+	elapsedTime = 0;
+}
+
+void Animation::stop()
+{
+	setPlaying(false);
 	currentFrame = 0;
 	elapsedTime = 0;
 }

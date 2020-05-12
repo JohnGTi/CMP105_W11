@@ -33,12 +33,15 @@ public:
 	bool getLooping() { return isLooping; };
 	void setPlaying(bool play) { isPlaying = play; };
 	bool getPlaying() { return isPlaying; };
+	void play(bool play) { isPlaying = true; };
+	void stop();
+	void pause() { isPlaying = false; };
 
 protected:
 	std::vector<sf::IntRect>frames;
 	sf::IntRect frame;
 	int currentFrame;
-	float animationSpeed;	// in FPS
+	float animationSpeed;
 	bool flipped;
 	bool isLooping;
 	bool isPlaying;
