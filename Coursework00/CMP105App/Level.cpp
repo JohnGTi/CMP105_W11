@@ -200,7 +200,8 @@ void Level::render()
 		window->draw(pointer);
 		window->draw(title);
 	}
-	window->draw(cursor);
+
+	if (enemy.getHealth() < 0) { window->draw(cursor); } //Cursor will not display after player win.
 	//std::cout << "(" << protag.getPosition().y << "),(" << input->getMouseY() << ")\n";
 	endDraw();
 }
