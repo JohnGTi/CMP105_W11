@@ -73,6 +73,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	cursor.setTexture(&cursorImg);
 	cursor.setSize(sf::Vector2f(20, 20));
 	cursor.setOrigin(sf::Vector2f(10, 10));
+	//cursor.setFillColor(sf::Color(255, 255, 255, 128)); Set Opacity for any biz.
 	window->setMouseCursorVisible(false);
 }
 
@@ -201,7 +202,7 @@ void Level::render()
 		window->draw(title);
 	}
 
-	if (enemy.getHealth() < 0) { window->draw(cursor); } //Cursor will not display after player win.
+	if (enemy.getHealth() > 0) { window->draw(cursor); } //Cursor will not display after player win.
 	//std::cout << "(" << protag.getPosition().y << "),(" << input->getMouseY() << ")\n";
 	endDraw();
 }

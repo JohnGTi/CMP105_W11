@@ -53,5 +53,6 @@ private:
 
 	bool invincible = false;
 
-	float elapsedDt; //Unused so far (may be used to implement smoother transitions. Animate a fade over elapsedDt as opposed to an instant cut to the next screen.
+	float elapsedDt; //Used to implement smoother transitions. Animate a fade over elapsedDt as opposed to an instant cut to the next screen.
+	float opacity = 0; //increments by elapsed time / fade period * 255 (used to set alpha channel value).
 };
