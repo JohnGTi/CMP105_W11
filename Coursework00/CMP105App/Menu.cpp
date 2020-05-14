@@ -177,7 +177,7 @@ void Menu::update(float dt)
 		pointer.setPosition(navValues[0][selectNav], navValues[1][selectNav]);
 
 		if (elapsedDt >= 3.83f) { //After a moment of stillness, cut to level.
-			pgNav = 0; selectNav = 0;
+			pgNav = 0; selectNav = 0; elapsedDt = 0; //resetElapsed = true;
 			std::cout << "Menu>Level.\n";
 			gameState->setCurrentState(State::LEVEL);
 			//I orignally planned to add a fade in level by redrawing the top of the background over the game and fade out as above,
