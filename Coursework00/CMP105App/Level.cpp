@@ -40,7 +40,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	hitMarker.setSize(sf::Vector2f(20, 20));
 	hitMarker.setOrigin(hitMarker.getSize().x / 2, hitMarker.getSize().y / 2); //Centres origin for hitmarker.
 
-	bgArt.loadFromFile("gfx/BGProtoLined.png"); //Background art currently only in prototype form.
+	bgArt.loadFromFile("gfx/Background.png"); //Background art currently only in prototype form.
 
 	levelBackground.setTexture(&bgArt);
 	levelBackground.setSize(sf::Vector2f(1200, 2363));
@@ -85,6 +85,16 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	levelAmbience.play();
 	levelAmbience.setVolume(0);
 	levelAmbience.setLoop(true);
+
+	groundImg.loadFromFile("gfx/Water Base.png");
+	waterBase.setTexture(&groundImg);
+	waterBase.setSize(sf::Vector2f(1200, 4726));
+	waterBase.setPosition(0, 0 - waterBase.getSize().y / 2);
+
+	waveImg.loadFromFile("gfx/Water foam.png");
+	waterRipple.setTexture(&waveImg);
+	waterRipple.setSize(sf::Vector2f(1200, 4726));
+	waterRipple.setFillColor(sf::Color(255, 255, 255, 30));
 }
 
 Level::~Level()
@@ -136,6 +146,11 @@ void Level::handleInput(float dt)
 void Level::update(float dt, bool invincibility)
 {
 	menuAmbience.setVolume(2);
+	waterRipple.setPosition(waterRipple.getPosition().x, waterRipple.getPosition().y - (10 * dt));
+	if (waterRipple.getPosition().y + (waterRipple.getSize().y / 2) <= 0) { waterRipple.setPosition(0, 0); }
+
+	waterBase.setPosition(waterBase.getPosition().x, waterBase.getPosition().y + (10 * dt));
+	if (waterBase.getPosition().y >= 0) { waterBase.setPosition(0, 0 - waterBase.getSize().y / 2); }
 
 	cursor.setPosition(input->getMouseX(), input->getMouseY());
 	cursor.setRotation(protag.getTheta());
@@ -189,6 +204,8 @@ void Level::update(float dt, bool invincibility)
 void Level::render()
 {
 	beginDraw();
+	window->draw(waterBase);
+	window->draw(waterRipple);
 	window->draw(levelBackground);
 
 	//window->draw(enemHitBox);

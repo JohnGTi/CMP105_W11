@@ -55,6 +55,12 @@ private:
 	Background levelBackground; //Stationary canvas, animates with a player win for effective transition.
 	sf::Texture bgArt;
 
+	GameObject waterBase;
+	sf::Texture groundImg;
+
+	GameObject waterRipple;
+	sf::Texture waveImg;
+
 	bool pause = false; //Boolean controlling pause state.
 	bool initialBreath = false; //Boolean allowing protag audio at first sight of enemy.
 	int yNav = 0; //Up and down navigation for pause menu/death screen.

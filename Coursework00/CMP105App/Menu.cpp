@@ -46,7 +46,7 @@ Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
 	onOff.setCharacterSize(16);
 	onOff.setFillColor(sf::Color::White);
 
-	bgArt.loadFromFile("gfx/BGProtoLined.png");
+	bgArt.loadFromFile("gfx/Background.png");
 	menuBackground.setTexture(&bgArt);
 	menuBackground.setSize(sf::Vector2f(1200, 2363)); //Background art.
 	menuBackground.setPosition(0, 0); //1688 ;
