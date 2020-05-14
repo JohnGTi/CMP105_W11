@@ -128,7 +128,7 @@ void Protag::update(float dt, bool enemSuccess, bool invisOn) //Here is where in
 			actionBuffer.loadFromFile("sfx/ProtagExert/ProtagExert" + std::to_string(c) + ".wav");
 			action.play();
 			slow = slow + 1.625f; //slow protag overall speed by...
-			allowResolve = false; std::cout << "protag.health " << health << ".\n";
+			allowResolve = false;
 		}
 	} if (!enemSuccess) { allowResolve = true; }
 

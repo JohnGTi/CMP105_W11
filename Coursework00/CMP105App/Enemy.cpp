@@ -115,7 +115,7 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 					slow = slow + 1.625f;
 				} else if (slow > 0.f) { slow = slow + 1.625f; }
 
-				allowResolve = false; std::cout << "enemy.health " << health <<".\n";
+				allowResolve = false;
 			}
 		}
 		if (!prtgSuccess) { allowResolve = true; }
