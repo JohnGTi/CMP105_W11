@@ -74,4 +74,6 @@ private:
 
 	GameObject cursor;
 	sf::Texture cursorImg;
+
+	float elapsedDt = 0;
 };

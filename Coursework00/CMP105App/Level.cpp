@@ -176,6 +176,13 @@ void Level::update(float dt, bool invincibility)
 
 	if (enemy.getHealth() <= 0 && pause == false) { //Checks for enemy death, resolves with 'death scene' (entity animations yet to be implemented), camera pans away from protag drawing closer to the fallen enemy.
 		//Relocate to death scene if animation is completed.
+		elapsedDt += dt;
+		float vol;
+		if (elapsedDt < 16.f) {
+			vol = 50 - ((elapsedDt / 16.f) * 50); //Fraction of volume subtracted so as to decrease the volume over time the end scene.
+		}
+		else { vol = 0; } //Elements are invisible after fade out.
+		levelAmbience.setVolume(vol);
 		if (levelBackground.sceneEnd(dt)) { //Scene (camera pan and pull back) plays out in function until true is returned.
 			protag.resetPlay(); //From here, the stage can be reset and the transition back to the main menu complete.
 			enemy.resetPlay();
@@ -184,6 +191,7 @@ void Level::update(float dt, bool invincibility)
 			yNav = 0;
 			//protagBreath.setVolume(0);
 			levelAmbience.setVolume(0);
+			elapsedDt = 0;
 			std::cout << "Level>Menu.\n";
 			gameState->setCurrentState(State::MENU);
 		}
