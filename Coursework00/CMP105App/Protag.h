@@ -1,10 +1,19 @@
 #pragma once
 #include "Framework/GameObject.h"
 #include "Framework\Animation.h"
+#include "Framework/AudioManager.h"
+#include <cstdlib>
+#include <ctime>
+#include <string>
 
 class Protag : public GameObject
 {
 protected:
+	sf::SoundBuffer actionBuffer;
+	sf::Sound action;
+	sf::SoundBuffer exertBuffer;
+	sf::Sound exert;
+
 	Animation walk[12];
 	Animation strike[12];
 	Animation* currentAnimation;

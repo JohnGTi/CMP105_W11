@@ -2,15 +2,23 @@
 #include "Framework/GameObject.h"
 #include "Framework\Animation.h"
 #include "Framework/Vector.h"
+#include "Framework/AudioManager.h"
+#include <cstdlib>
+#include <ctime>
+#include <string>
 
 class Enemy : public GameObject
 {
 protected:
+	sf::SoundBuffer actionBuffer;
+	sf::Sound action;
+	sf::SoundBuffer impactBuffer;
+	sf::Sound impact;
+
 	Animation* currentAnimation;
 	Animation walk[12];
 	Animation strike[12];
 	//Declares both evolving animations for enemy.
-
 
 	int stance = 6; //Preset to face downwards (towards player starting point).
 	int stanceLock;

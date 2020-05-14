@@ -19,6 +19,17 @@ Protag::Protag()
 
 	sceneVelocity.y = 10.f; //Values set for motion in end scene.
 	acceleration.y = 10.f;
+
+	actionBuffer.loadFromFile("sfx/ProtagAttack/ProtagAttack1.wav");
+	action.setBuffer(actionBuffer);
+	action.setPitch(3);
+	exertBuffer.loadFromFile("sfx/ProtagExert/ProtagExert1.wav");
+	exert.setBuffer(exertBuffer);
+	exert.setVolume(50);
+	exert.setPitch(1.5);
+	//action.setVolume(0);
+
+	srand(time(0)); //Initialise random num generator using time.
 }
 
 Protag::~Protag()
@@ -96,6 +107,13 @@ void Protag::handleInput(float dt, sf::Vector2f enemPos, int enemStance)
 
 			if ((deltaX * deltaX + deltaY * deltaY) < (26 * 26)) { hit = true; } //Hit is true if tip of sword connects anywhere with enemy circle.
 		}
+		if (lockDuration >= 0.15f && lockDuration < (0.15f + dt)) { //&& lockDuration < (0.15f + dt)
+			int c = rand() % 14 + 1;
+			actionBuffer.loadFromFile("sfx/ProtagAttack/ProtagAttack" + std::to_string(c) + ".wav");
+			action.play();
+			exertBuffer.loadFromFile("sfx/ProtagExert/ProtagExert" + std::to_string(c) + ".wav");
+			exert.play();
+		}
 		if (lockDuration >= 0.25f) { currentAnimation->reset(); currentAnimation = &walk[stanceLock]; currentAnimation->reset(); } //Reset animation after attack has run.
 		if (lockDuration >= 0.35f) { lock = false; lockDuration = 0; hit = false; } //Set period until player can move normally.
 	}
@@ -106,6 +124,9 @@ void Protag::update(float dt, bool enemSuccess, bool invisOn) //Here is where in
 	if (enemSuccess) { //Checks enemy attack collision feedback and resolves.
 		if (allowResolve) { //allowResolve ensures a sinlge hit only registers as a single hit.
 			if (!invisOn) { health = health - 0.05f; } //decrement protag health by... (if not invincible).
+			int c = rand() % 20 + 1;
+			actionBuffer.loadFromFile("sfx/ProtagExert/ProtagExert" + std::to_string(c) + ".wav");
+			action.play();
 			slow = slow + 1.625f; //slow protag overall speed by...
 			allowResolve = false; std::cout << "protag.health " << health << ".\n";
 		}

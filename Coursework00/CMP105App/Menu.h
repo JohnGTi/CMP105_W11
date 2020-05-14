@@ -33,6 +33,8 @@ private:
 	GameState* gameState;
 	AudioManager* audio;
 
+	sf::Music menuAmbience;
+
 	sf::Font font;
 	sf::Text title;
 	sf::Text script;

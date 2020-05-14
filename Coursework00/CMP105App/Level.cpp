@@ -75,6 +75,16 @@ Level::Level(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud
 	cursor.setOrigin(sf::Vector2f(10, 10));
 	//cursor.setFillColor(sf::Color(255, 255, 255, 128)); Set Opacity for any biz.
 	window->setMouseCursorVisible(false);
+
+	menuAmbience.openFromFile("sfx/Ambient/AmbientMenu.wav");
+	menuAmbience.play();
+	menuAmbience.setVolume(0);
+	menuAmbience.setLoop(true);
+
+	levelAmbience.openFromFile("sfx/Ambient/AmbientLevel.wav");
+	levelAmbience.play();
+	levelAmbience.setVolume(0);
+	levelAmbience.setLoop(true);
 }
 
 Level::~Level()
@@ -100,6 +110,7 @@ void Level::handleInput(float dt)
 			enemy.setPosition(window->getSize().x * 0.5, -334);
 			if (yNav == 1) { //If the enter key was pressed on navY 1, the user selected exit.
 				yNav = 0;
+				levelAmbience.setVolume(0);
 				std::cout << "Level>Menu.\n";
 				gameState->setCurrentState(State::MENU); //Change gameState to the Main Menu (splash screen, as menuPage is reset when the level is entered).
 			} yNav = 0; //Set to zero in preparation for screen reopening.
@@ -124,14 +135,18 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt, bool invincibility)
 {
+	menuAmbience.setVolume(2);
+
 	cursor.setPosition(input->getMouseX(), input->getMouseY());
 	cursor.setRotation(protag.getTheta());
 
 	prtgHitBox.setPosition(protag.getPosition().x - 22, protag.getPosition().y - 28); //Updates positioning for hitboxes, should they need to be drawn.
 	enemHitBox.setPosition(enemy.getPosition().x - 50, enemy.getPosition().y - 50);
 
-	if (protag.getHealth() > 0 && pause == false) { protag.update(dt, enemy.getHit(), invincibility); } //Protag and enemy will not update during pause and when their respective health is fully diminished.
-	if (enemy.getHealth() > 0 && pause == false) { enemy.update(dt, protag.getPosition(), protag.getHit()); }
+	if (protag.getHealth() > 0 && pause == false) { //Protag and enemy will not update during pause and when their respective health is fully diminished.
+		protag.update(dt, enemy.getHit(), invincibility);
+	}
+	if (enemy.getHealth() > 0 && pause == false) { levelAmbience.setVolume(50); enemy.update(dt, protag.getPosition(), protag.getHit()); } //volume 50
 
 	if (Collision::checkBoundingBox(&protag, &enemy)) { //Function part of collision class utilised for player and enemybody collision.
 		protag.collisionResponse(NULL, enemy.getPosition()); //As the space attempts to emulate 3dimensions, the collision boxes allow generous movement around each other.
@@ -152,6 +167,8 @@ void Level::update(float dt, bool invincibility)
 			pause = false;
 			enemy.setPosition(window->getSize().x * 0.5, -334);
 			yNav = 0;
+			//protagBreath.setVolume(0);
+			levelAmbience.setVolume(0);
 			std::cout << "Level>Menu.\n";
 			gameState->setCurrentState(State::MENU);
 		}

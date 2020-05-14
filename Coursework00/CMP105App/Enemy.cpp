@@ -23,6 +23,13 @@ Enemy::Enemy()
 	
 	stepVelocity.y = 10.f; //Values set for motion in end scene.
 	acceleration.y = 10.f;
+
+	actionBuffer.loadFromFile("sfx/EnemyExert/EnemyExert1.wav");
+	action.setBuffer(actionBuffer);
+	impactBuffer.loadFromFile("sfx/ProtagImpact/ProtagImpact1.wav");
+	impact.setBuffer(impactBuffer);
+
+	srand(time(0)); //Initialise random num generator using time.
 }
 
 Enemy::~Enemy()
@@ -56,6 +63,7 @@ void Enemy::handleInput(float dt)
 
 void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 {
+	int c = rand() % 14 + 1;
 	//If object is close enough to target, the enemy picks up the pace/
 	if (Vector::magnitude(target - getPosition()) < 219.f) {
 		walk[stance].setFrameSpeed(1.5f / 10.f); //At a quicker pace, the walking animation is sped up.
@@ -81,6 +89,9 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 
 	if (Vector::magnitude(target - getPosition()) < 60.f && lock == false) //Enemy decides to attack when within range.
 	{
+		int c = rand() % 12 + 1;
+		actionBuffer.loadFromFile("sfx/EnemyExert/EnemyExert" + std::to_string(c) + ".wav");
+		action.play();
 		lock = true; //Enemy commits to attack.
 		stanceLock = stance; //Enemy commits to aim. (All similar to protag).
 	}
@@ -91,10 +102,14 @@ void Enemy::update(float dt, sf::Vector2f target, bool prtgSuccess)
 		if (prtgSuccess) {
 			if (!flinchRes && lockDuration >= 0.f && lockDuration < 0.0125f) { //Enemy successfully staggered if player connects on first frame of enemy attack. Flinch is subtle, serves to allow more time for player to step back.
 				flinch = true; flinchRes = true; currentAnimation->reset(); currentAnimation = &strike[stanceLock - 4]; //std::cout << "Flinch.\n";
+				impactBuffer.loadFromFile("sfx/ProtagImpact/ProtagImpact" + std::to_string(c) + ".wav");
 			}
 			if (allowResolve) {
 				health = health - 0.025f; //decrement enemy health by...
-				
+				impact.play();
+				c = rand() % 19 + 1;
+				actionBuffer.loadFromFile("sfx/EnemyWince/EnemyWince" + std::to_string(c) + ".wav");
+				action.play();
 				if (health < 0.35f && slow == 0.f) { //At 0.35, the enemy's health is reset. Further damage slows movement.
 					health = 1.f;
 					slow = slow + 1.625f;

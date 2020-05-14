@@ -50,6 +50,11 @@ Menu::Menu(sf::RenderWindow* hwnd, Input* in, GameState* gs, AudioManager* aud)
 	menuBackground.setTexture(&bgArt);
 	menuBackground.setSize(sf::Vector2f(1200, 2363)); //Background art.
 	menuBackground.setPosition(0, 0); //1688 ;
+
+	menuAmbience.openFromFile("sfx/Ambient/AmbientMenu.wav");
+	menuAmbience.play();
+	menuAmbience.setVolume(0);
+	menuAmbience.setLoop(true);
 }
 
 Menu::~Menu()
@@ -114,8 +119,9 @@ void Menu::handleInput(float dt)
 // Update game objects
 void Menu::update(float dt)
 {
+	menuAmbience.setVolume(25);
 	//std::cout << "(" << input->getMouseX() << "),(" << input->getMouseY() << ")\n";
-	std::cout << "(" << elapsedDt << "\n";
+	//std::cout << "(" << elapsedDt << "\n";
 
 	switch (pgNav) //This switch case sets the page layout according to the pgNav (setting string content, positioning).
 	{
@@ -178,6 +184,7 @@ void Menu::update(float dt)
 
 		if (elapsedDt >= 3.83f) { //After a moment of stillness, cut to level.
 			pgNav = 0; selectNav = 0; elapsedDt = 0; //resetElapsed = true;
+			menuAmbience.setVolume(0);
 			std::cout << "Menu>Level.\n";
 			gameState->setCurrentState(State::LEVEL);
 			//I orignally planned to add a fade in level by redrawing the top of the background over the game and fade out as above,

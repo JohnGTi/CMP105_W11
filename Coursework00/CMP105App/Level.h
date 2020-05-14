@@ -36,6 +36,9 @@ private:
 	GameState* gameState;
 	AudioManager* audio;
 
+	sf::Music menuAmbience;
+	sf::Music levelAmbience;
+
 	Protag protag;
 	sf::Texture prtgBase; //Protag(onist) class. Player controlled GameObject.
 
@@ -53,6 +56,7 @@ private:
 	sf::Texture bgArt;
 
 	bool pause = false; //Boolean controlling pause state.
+	bool initialBreath = false; //Boolean allowing protag audio at first sight of enemy.
 	int yNav = 0; //Up and down navigation for pause menu/death screen.
 
 	GameObject menuShade; //GameObject serves as a backdrop for pause menu/death screen.
